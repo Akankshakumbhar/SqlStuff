@@ -1,0 +1,224 @@
+1. Retrieve all columns for all records in the dataset.
+q=pandas.read_csv(r"C:\Users\Star\Desktop\pysql(intership) data\SQL - INTERNSHIP\SQL-Pharma_Data_analysis\Pharma_data.csv")
+>>> print(q)
+                   Distributor                               Customer Name  ...          Manager Sales Team
+0       Gottlieb-Cruickshank                       Zieme, Doyle and Kunze   ...    Britanny Bold      Delta
+1       Gottlieb-Cruickshank                                    Feest PLC   ...    Britanny Bold      Delta
+2       Gottlieb-Cruickshank          Medhurst-Beer Pharmaceutical Limited  ...      Tracy Banks      Bravo
+3       Gottlieb-Cruickshank                         Barton Ltd Pharma Plc  ...    Britanny Bold      Delta
+4       Gottlieb-Cruickshank                          Keeling LLC Pharmacy  ...    Britanny Bold      Delta
+...                        ...                                         ...  ...              ...        ...
+254077    Bashirian-Kassulke    Koch, Borer and Hagenes Pharmaceutical Ltd  ...   James Goodwill       Alfa
+254078    Bashirian-Kassulke                   Hane Ltd Pharmaceutical Ltd  ...    Britanny Bold      Delta
+254079    Bashirian-Kassulke                        Harris-Conroy Pharmacy  ...      Tracy Banks      Bravo
+254080    Bashirian-Kassulke                        Balistreri Group Pharm  ...  Alisha Cordwell    Charlie
+254081    Bashirian-Kassulke                Heathcote, Kovacek and Parker   ...   James Goodwill       Alfa
+
+[254082 rows x 18 columns]
+>>>
+
+
+2. How many unique countries are represented in the dataset?
+ a=duckdb.query("select country from q group by country").df()
+>>> print(a)
+   Country
+0   Poland
+1  Germany
+
+3. Select the names of all the customers on the 'Retail' channel.
+>>> s=duckdb.query("select  CustomerName   from q where Subchannel='Retail'").df()
+>>> print(s)
+                                 CustomerName
+0                                  Feest PLC
+1                        Keeling LLC Pharmacy
+2              Blick, Pacocha and Schowalter
+3                       Leuschke PLC Pharmacy
+4      McClure, Zemlak and Dibbert Pharma Plc
+...                                       ...
+68346                             Paucek PLC
+68347                  Walsh-Brown Pharma Plc
+68348  Schinner, Gaylord and Treutel Pharmacy
+68349                  Harris-Conroy Pharmacy
+68350          Heathcote, Kovacek and Parker
+
+[68351 rows x 1 columns]
+or
+s=duckdb.query("select  CustomerName   from q where Subchannel='Retail' group by CustomerName").df()
+>>> print(s)
+                                   CustomerName
+0                         West Group Pharma Plc
+1                  Buckridge, Dach and Carroll
+2                         Ward Group Pharma Plc
+3                         Mraz-Kutch Pharma Plc
+4                                Huel Inc Pharm
+..                                          ...
+195                         Denesik-Hintz Pharm
+196                      Trantow LLC Pharma Plc
+197  Crist, Wisoky and Nolan Pharmaceutical Ltd
+198  Beer, Kohler and Beatty Pharmaceutical Ltd
+199                            Mraz-Kutch Pharm
+
+
+4. Find the total quantity sold for the ' Antibiotics' product class.
+a=duckdb.query("Select count(Quantity) from q where ProductClass='Antibiotics'").df()
+>>> print(a)
+   count(Quantity)
+0            36979
+or
+a=duckdb.query("Select sum(Quantity) from q where ProductClass='Antibiotics'").df()
+>>> print(a)
+   sum(Quantity)
+0   4.154322e+06
+
+
+5. List all the distinct months present in the dataset.
+e=duckdb.query("select DISTINCT Month from q").df()
+>>> print(e)
+        Month
+0      August
+1   September
+2     January
+3    February
+4       March
+5         May
+6        June
+7        July
+8    November
+9     October
+10   December
+11      April
+>>>
+
+
+or
+e=duckdb.query("select  Month from q group by Month").df()
+>>> print(e)
+        Month
+0      August
+1   September
+2     January
+3    February
+4       March
+5         May
+6        June
+7        July
+8    November
+9     October
+10   December
+11      April
+>>>
+
+6. Calculate the total sales for each year.
+
+7. Find the customer with the highest sales value.
+e=duckdb.query("select CustomerName from q order by Sales desc limit 1").df()
+>>> print(e)
+            CustomerName
+0  Mraz-Kutch Pharma Plc
+8. Get the names of all employees who are Sales Reps and are managed by 'James Goodwill'.
+ 
+>>>
+9. Retrieve the top 5 cities with the highest sales.
+ w=duckdb.query("Select City from q  order by Sales desc limit 5").df()
+>>> print(w)
+         City
+0    Butzbach
+1  Baesweiler
+2    Cuxhaven
+3     Bottrop
+4    Weinheim
+>>>
+10. Calculate the average price of products in each sub-channel.
+ e=duckdb.query("select  Subchannel,avg(Price) from q  group by Subchannel").df()
+>>> print(e)
+    Subchannel  avg(Price)
+0   Government  413.149440
+1  Institution  411.954398
+2       Retail  412.807040
+3      Private  410.718371
+>>>
+
+11. Join the 'Employees' table with the 'Sales' table to get the name of the Sales Rep and the corresponding sales records.
+12. Retrieve all sales made by employees from ' Rendsburg ' in the year 2018.
+ e=duckdb.query("select Sales from q where City='Rendsburg' AND year='2018'").df()
+>>> print(e)
+       Sales
+0     4128.0
+1      595.0
+2     2690.0
+3      124.0
+4    70380.0
+..       ...
+88   15840.0
+89    4350.0
+90    1130.0
+91  293760.0
+92   14840.0
+
+[93 rows x 1 columns]
+>>>
+13. Calculate the total sales for each product class, for each month, and order the results by year, month, and product class.
+
+
+14. Find the top 3 sales reps with the highest sales in 2019.
+ w=duckdb.query("select Sales from q where Year=2019 order by Sales desc limit 3").df()
+>>> print(w)
+        Sales
+0  74205600.0
+1  30164400.0
+2  28294700.0
+15. Calculate the monthly total sales for each sub-channel, and then calculate the average monthly sales for each sub-channel over the years.
+
+16. Create a summary report that includes the total sales, average price, and total quantity sold for each product class.
+ s=duckdb.query("select ProductName,sum(Sales),avg(Price),sum(Quantity)from q group by ProductName").df()
+>>> print(s)
+             ProductName   sum(Sales)  avg(Price)  sum(Quantity)
+0              Relenvice   61072245.0       459.0       133055.0
+1                Acycpex   44220570.0       510.0        86707.0
+2             Alpharolac   63910964.0       533.0       119908.0
+3              Raparidol   21749035.0       187.0       116305.0
+4              Allomenda   60793671.0       487.0       124833.0
+..                   ...          ...         ...            ...
+235              Betanem  107073473.0       611.0       175243.0
+236  Hemavate Spirolinum   31089240.0       210.0       148044.0
+237             Acubulin   59892210.0       490.0       122229.0
+238    Biotasol Siloderm   39476455.0       373.0       105835.0
+239            Acantaine    7181328.0        66.0       108808.0
+
+[240 rows x 4 columns]
+>>>s=duckdb.query("select ProductName,count(Sales),avg(Price),count(Quantity)from q group by ProductName").df()
+>>> print(s)
+              ProductName  count(Sales)  avg(Price)  count(Quantity)
+0                 Zyvance          1082       323.0             1082
+1                 Exexone          1026       239.0             1026
+2    Belavarix Benzabicin          1074       131.0             1074
+3               Araxetine          1096       450.0             1096
+4       Cricane Acamsumab          1091        22.0             1091
+..                    ...           ...         ...              ...
+235              Sevoderm          1058       663.0             1058
+236             Magneprex          1068       187.0             1068
+237              Menogine          1132       742.0             1132
+238               Ampysin          1019       243.0             1019
+239             Interzide
+
+17. Find the top 5 customers with the highest sales for each year.
+> d=duckdb.query("select CustomerName ,Year from q  order by Sales desc limit 5").df()
+>>> print(d)
+                                        CustomerName  Year
+0                              Mraz-Kutch Pharma Plc  2019
+1              Parker, Green and Emmerich Pharma Plc  2020
+2                                    Zemlak-Witting   2019
+3                                       Streich PLC   2019
+4  Prohaska, Bogisich and Gutkowski Pharmaceutica...  2019
+or
+
+18. Calculate the year-over-year growth in sales for each country.
+2 of 2
+19. List the months with the lowest sales for each year
+ r=duckdb.query("select Month ,Year,Sales from q order by Sales asc limit 1").df()
+>>> print(r)
+    Month  Year      Sales
+0  August  2019 -4161600.0
+>>>
+
+20. Calculate the total sales for each sub-channel in each country, and then find the country with the highest total sales for each sub-channel.
